@@ -4,7 +4,6 @@ from rest_framework import serializers
 from .models import Answer, Poll, Question
 
 
-
 class QuestionSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -49,8 +48,11 @@ class AnswerSerializer(serializers.ModelSerializer):
         fields = ('id', 'question', 'text', 'user', 'date', )
 
     def create(self, validated_data):
+        # Определение пользователя
         user = self.context['request'].user.pk
         user_field = self.context['request'].POST.get('user')
+        # Если поле User пустое - вставляется значение определенного пользователя
+        # Если пользователь не определен - вставляется значение token из cookies
         if user_field == '':
             if get_user_model().objects.filter(pk=user):
                 removed_data = validated_data.pop('user')

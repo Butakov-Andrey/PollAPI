@@ -25,13 +25,12 @@ class PollList(generics.ListCreateAPIView):
 
 
 class PollDetail(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [ReadOnly]
     queryset = Poll.objects.all()
     serializer_class = PollSerializer
 
 
 class QuestionList(generics.ListCreateAPIView):
-    permission_classes = [ReadOnly]
+    permission_classes = [permissions.IsAdminUser]
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
 
