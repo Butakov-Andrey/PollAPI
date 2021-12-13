@@ -1,11 +1,6 @@
 from django.contrib import admin
 
-from .models import Choice, Poll, Question
-
-
-class ChoiceInLine(admin.TabularInline):
-    model = Choice
-    extra = 1
+from .models import Answer, Poll, Question
 
 
 class QuestionInLine(admin.TabularInline):
@@ -13,11 +8,16 @@ class QuestionInLine(admin.TabularInline):
     extra = 1
 
 
+class AnswerInLine(admin.TabularInline):
+    model = Answer
+    extra = 1
+
+
 class QuestionAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['poll', 'text', 'choice_type']})
     ]
-    inlines = [ChoiceInLine]
+    inlines = [AnswerInLine]
 
 
 class PollAdmin(admin.ModelAdmin):
@@ -28,5 +28,12 @@ class PollAdmin(admin.ModelAdmin):
     list_display = ('name', 'description', 'is_active')
 
 
+class AnswerAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None, {'fields': ['question', 'text', 'user']})
+    ]
+
+
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Poll, PollAdmin)
+admin.site.register(Answer, AnswerAdmin)

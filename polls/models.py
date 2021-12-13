@@ -1,10 +1,11 @@
 from django.db import models
+from django.contrib.auth.models import User
 from django.utils import timezone
 from .constants import CHOICE_TYPES
 
 
 class Poll(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50) # need Uniq
     started_at = models.DateTimeField('date started')
     finished_at = models.DateTimeField('date finished')
     description = models.CharField(max_length=200)
@@ -20,11 +21,10 @@ class Poll(models.Model):
 
 
 class Question(models.Model):
-    poll = models.ForeignKey(Poll, on_delete=models.CASCADE)
+    poll = models.ForeignKey(Poll, null=True, on_delete=models.CASCADE)
     choice_type = models.CharField(
         max_length=11,
-        choices=CHOICE_TYPES,
-        default='TEXT'
+        choices=CHOICE_TYPES
     )
     text = models.CharField(max_length=200)
 
@@ -32,10 +32,12 @@ class Question(models.Model):
         return self.text
 
 
-class Choice(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    choice_text = models.CharField(max_length=200)
-    votes = models.IntegerField(default=0)
+class Answer(models.Model):
+    question = models.ForeignKey(Question, null=True, on_delete=models.CASCADE)
+    text = models.CharField(max_length=200, blank=True, null=True)
+    # user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
+    user = models.CharField(max_length=200, null=True)
+    date = models.DateTimeField(default=timezone.now(), editable=False)
 
     def __str__(self):
-        return self.choice_text
+        return self.text

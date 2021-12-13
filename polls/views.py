@@ -1,11 +1,13 @@
-from django.db.models import Prefetch
 from django.utils import timezone
-from rest_framework import generics, permissions
-from .models import Poll, Question
-from .serializers import PollSerializer, QuestionSerializer
+from rest_framework import filters, generics, permissions
+from .models import Answer, Poll, Question
+from .permissions import ReadOnly
+from .serializers import AnswerSerializer, PollSerializer
+from .serializers import QuestionSerializer, MyAnswersSerializer
 
 
 class ActivePollList(generics.ListCreateAPIView):
+    permission_classes = [ReadOnly]
     serializer_class = PollSerializer
 
     def get_queryset(self):
@@ -18,17 +20,18 @@ class ActivePollList(generics.ListCreateAPIView):
 
 
 class PollList(generics.ListCreateAPIView):
-    permission_classes = [permissions.IsAdminUser]
     serializer_class = PollSerializer
     queryset = Poll.objects.all()
 
 
 class PollDetail(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [ReadOnly]
     queryset = Poll.objects.all()
     serializer_class = PollSerializer
 
 
 class QuestionList(generics.ListCreateAPIView):
+    permission_classes = [ReadOnly]
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
 
@@ -36,3 +39,22 @@ class QuestionList(generics.ListCreateAPIView):
 class QuestionDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
+
+
+class AnswerList(generics.ListCreateAPIView):
+    permission_classes = [permissions.AllowAny]
+    queryset = Answer.objects.all()
+    serializer_class = AnswerSerializer
+
+
+class AnswerDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Answer.objects.all()
+    serializer_class = AnswerSerializer
+
+
+class MyAnswers(generics.ListAPIView):
+    permission_classes = [permissions.AllowAny]
+    queryset = Answer.objects.all()
+    serializer_class = MyAnswersSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['=user']
