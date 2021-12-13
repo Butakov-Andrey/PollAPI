@@ -35,7 +35,6 @@ class Question(models.Model):
 class Answer(models.Model):
     question = models.ForeignKey(Question, null=True, on_delete=models.CASCADE)
     text = models.CharField(max_length=200, blank=True, null=True)
-    # user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
     user = models.CharField(max_length=200, null=True)
     date = models.DateTimeField(default=timezone.now(), editable=False)
 
